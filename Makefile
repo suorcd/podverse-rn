@@ -29,7 +29,7 @@ install_gem_cocoapods:
 install_prereq: install_brew_check install_brew_packages install_gem_cocoapods
 
 
-run_ios:
+start_ios:
 	npx react-native run-ios
 	yarn dev
 
@@ -63,7 +63,7 @@ clean_yarn_cache:
 	@echo "Clearing yarn cache..."
 	yarn cache clean
 
-clean_node_install:
+install_node_dep:
 	yarn install
 	npx pod-install
 	yarn postinstall
@@ -72,11 +72,11 @@ start_vscode:
 	code .
 	clear
 
-.PHONY: refresh clean_kill_packager clean_kill_listeners clean_android clean_ios clean_node_modules clean_node_install
-refresh: clean_kill_packager clean_kill_listeners clean_android clean_ios clean_node_modules clean_node_install
+.PHONY: refresh clean_kill_packager clean_kill_listeners clean_android clean_ios clean_node_modules install_node_dep
+refresh: clean_kill_packager clean_kill_listeners clean_android clean_ios clean_node_modules install_node_dep
 
-.PHONY: clean clean_kill_packager clean_kill_listeners clean_android clean_ios clean_node_modules clean_yarn_cache clean_node_install
-clean: clean_kill_packager clean_kill_listeners clean_android clean_ios clean_node_modules clean_node_install
+.PHONY: clean clean_kill_packager clean_kill_listeners clean_android clean_ios clean_node_modules clean_yarn_cache install_node_dep
+clean: clean_kill_packager clean_kill_listeners clean_android clean_ios clean_node_modules install_node_dep
 
-.PHONY: clean.sh clean_kill_electron clean_kill_packager clean_kill_listeners clean_android clean_ios clean_node_modules clean_node_install start_vscode
-clean.sh: clean_kill_electron clean_kill_packager clean_kill_listeners clean_android clean_ios clean_node_modules clean_node_install start_code
+.PHONY: clean.sh clean_kill_electron clean_kill_packager clean_kill_listeners clean_android clean_ios clean_node_modules install_node_dep start_vscode
+clean.sh: clean_kill_electron clean_kill_packager clean_kill_listeners clean_android clean_ios clean_node_modules install_node_dep start_code
