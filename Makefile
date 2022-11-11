@@ -13,13 +13,18 @@ endif
 say_hello:
 	@echo "Hello Podverse"
 
-.PHONY: install_prereq
-install_prereq:
+install_brew:
+	@echo "Check for brew in PATH"
+	which brew
+
+.PHONY: install_prereq install_brew
+install_prereq: install_brew
+
 	@echo "Install brew packages"
 	brew update
 	brew install cocoapods node npm ruby watchman yarn
 	@echo "Install user cocoapods"
-	/opt/homebrew/Cellar/ruby/3.1.2_1/bin/gem install cocoapods --user-install
+	/opt/homebrew/opt/ruby/bin/gem install cocoapods --user-install
 
 run_ios:
 	npx react-native run-ios
