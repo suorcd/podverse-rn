@@ -13,18 +13,21 @@ endif
 say_hello:
 	@echo "Hello Podverse"
 
-install_brew:
+install_brew_check:
 	@echo "Check for brew in PATH"
 	which brew
 
-.PHONY: install_prereq install_brew
-install_prereq: install_brew
-
+install_brew_packages:
 	@echo "Install brew packages"
 	brew update
 	brew install cocoapods node npm ruby watchman yarn
+install_gem_cocoapods:
 	@echo "Install user cocoapods"
 	/opt/homebrew/opt/ruby/bin/gem install cocoapods --user-install
+
+.PHONY: install_prereq install_brew install_brew_packages install_gem_cocoapods
+install_prereq: install_brew_check install_brew_packages install_gem_cocoapods
+
 
 run_ios:
 	npx react-native run-ios
@@ -44,18 +47,20 @@ clean_kill_listeners:
 
 clean_android:
 	echo "Cleaning android..."
-	./gradlew clean 2>/dev/null
-
+	-./gradlew clean
 clean_ios:
 	@echo "Cleaning ios..."
-	rm -rf ~/Library/Developer/Xcode/DerivedData 2>/dev/null
-	rm -rf ./ios/build 2>/dev/null
-	rm -rf ./ios/Pods 2>/dev/null
-	rm -rf ./ios/Podfile.lock 2>/dev/null
+	rm -rf ~/Library/Developer/Xcode/DerivedData
+	rm -rf ./ios/build
+	rm -rf ./ios/Pods
+	rm -rf ./ios/Podfile.lock
 
 clean_node_modules:
 	@echo "Clearing node modules..."
 	rm -rf node_modules/
+
+clean_yarn_cache:
+	@echo "Clearing yarn cache..."
 	yarn cache clean
 
 clean_node_install:
@@ -67,8 +72,11 @@ start_vscode:
 	code .
 	clear
 
-.PHONY: clean clean_kill_packager clean_kill_listeners clean_android clean_ios clean_node_modules clean_node_install
+.PHONY: refresh clean_kill_packager clean_kill_listeners clean_android clean_ios clean_node_modules clean_node_install
+refresh: clean_kill_packager clean_kill_listeners clean_android clean_ios clean_node_modules clean_node_install
+
+.PHONY: clean clean_kill_packager clean_kill_listeners clean_android clean_ios clean_node_modules clean_yarn_cache clean_node_install
 clean: clean_kill_packager clean_kill_listeners clean_android clean_ios clean_node_modules clean_node_install
 
-.PHONY: vcs_clean clean_kill_electron clean_kill_packager clean_kill_listeners clean_android clean_ios clean_node_modules clean_node_install start_vscode
-vcs_clean: clean_kill_electron clean_kill_packager clean_kill_listeners clean_android clean_ios clean_node_modules clean_node_install start_code
+.PHONY: clean.sh clean_kill_electron clean_kill_packager clean_kill_listeners clean_android clean_ios clean_node_modules clean_node_install start_vscode
+clean.sh: clean_kill_electron clean_kill_packager clean_kill_listeners clean_android clean_ios clean_node_modules clean_node_install start_code
