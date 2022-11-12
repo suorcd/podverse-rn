@@ -21,13 +21,26 @@ install_brew_packages:
 	@echo "Install brew packages"
 	brew update
 	brew install cocoapods node npm ruby watchman yarn
+
 install_gem_cocoapods:
 	@echo "Install user cocoapods"
 	/opt/homebrew/opt/ruby/bin/gem install cocoapods --user-install
 
-.PHONY: install_prereq install_brew install_brew_packages install_gem_cocoapods
-install_prereq: install_brew_check install_brew_packages install_gem_cocoapods
+.env:
+	@echo "Copy .env.all to .env"
+	cp .env.all .env
 
+.PHONY: install_prereq install_brew install_brew_packages install_gem_cocoapods
+install_prereq: .env install_brew_check install_brew_packages install_gem_cocoapods
+
+install_node_dep:
+	yarn install
+	npx pod-install
+	yarn postinstall
+
+.PHONY: install_pod
+install_pod:
+	pod install --repo-update
 
 start_ios:
 	npx react-native run-ios
@@ -48,6 +61,7 @@ clean_kill_listeners:
 clean_android:
 	echo "Cleaning android..."
 	-./gradlew clean
+
 clean_ios:
 	@echo "Cleaning ios..."
 	rm -rf ~/Library/Developer/Xcode/DerivedData
@@ -62,11 +76,6 @@ clean_node_modules:
 clean_yarn_cache:
 	@echo "Clearing yarn cache..."
 	yarn cache clean
-
-install_node_dep:
-	yarn install
-	npx pod-install
-	yarn postinstall
 
 start_vscode:
 	code .
